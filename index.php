@@ -13,10 +13,10 @@
             <a href="index.php" class="nav-brand">Курсы Колледжа связи №54</a>
             <div class="nav-links">
                 <a href="index.php">Все курсы</a>
-                <a href="login.php" id="loginLink">Войти</a>
-                <a href="register.php" id="registerLink">Регистрация</a>
-                <a href="profile.php" id="profileLink" style="display:none;">Мои курсы</a>
-                <a href="admin.php" id="adminLink" style="display:none;">Админ-панель</a>
+                <a href="login.html" id="loginLink">Войти</a>
+                <a href="register.html" id="registerLink">Регистрация</a>
+                <a href="profile.html" id="profileLink" style="display:none;">Мои курсы</a>
+                <a href="admin.html" id="adminLink" style="display:none;">Админ-панель</a>
                 <a href="#" id="logoutLink" style="display:none;" onclick="logout()">Выйти</a>
                 <span id="userName" style="display:none; margin-left: 15px;"></span>
             </div>
