@@ -172,27 +172,71 @@ function displayCourses(courses) {
     `).join('');
 }
 
-function getRegisterButtonText(user, course) {
+function registerForCourse(courseId) {
+    const user = getCurrentUser();
+    
     if (!user) {
-        return 'Войдите для записи';
-    }
-    if (user.role !== 'student') {
-        return 'Только для студентов';
+        alert('Для записи на курс необходимо войти в систему');
+        window.location.href = 'login.php';
+        return;
     }
     
-    // Проверяем, не записан ли уже студент на этот курс
+    if (user.role !== 'student') {
+        alert('Только студенты могут записываться на курсы');
+        return;
+    }
+    
+    // Проверяем, не записан ли уже
     const registrations = getStudentRegistrations();
     const isRegistered = registrations.some(reg => 
-        reg.studentId === user.id && reg.courseId === course.id
+        reg.studentId === user.id && reg.courseId === courseId
     );
     
     if (isRegistered) {
-        return 'Вы уже записаны';
+        alert('Вы уже записаны на этот курс');
+        return;
     }
     
-    return 'Записаться на курс';
+    if (!confirm('Вы уверены, что хотите записаться на этот курс?')) {
+        return;
+    }
+    
+    console.log('Записываемся на курс:', courseId, 'для пользователя:', user.id);
+    showLoading(true);
+    
+    // ВАЖНО: используем правильный action - registerCourse
+    fetch(`${API_URL}?action=registerCourse&studentId=${user.id}&courseId=${courseId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(result => {
+            showLoading(false);
+            console.log('Результат записи:', result);
+            if (result.success) {
+                alert('Успешно записались на курс!');
+                // Сохраняем в localStorage для демо-режима
+                const demoResult = registerStudentForCourse(user.id, courseId);
+                loadCourses(getCurrentFilters());
+            } else {
+                alert('Ошибка: ' + result.message);
+            }
+        })
+        .catch(error => {
+            showLoading(false);
+            console.error('Ошибка записи на курс:', error);
+            // Демо-режим при ошибке - сохраняем в localStorage
+            const demoResult = registerStudentForCourse(user.id, courseId);
+            if (demoResult.success) {
+                alert('Вы успешно записались на курс! (демо-режим)');
+                loadCourses(getCurrentFilters());
+            } else {
+                alert('Ошибка: ' + demoResult.message);
+            }
+        });
 }
-
 function getFormatText(format) {
     const formats = {
         'online': 'Онлайн',
@@ -389,4 +433,5 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Courses module loaded');
     setupSearch();
     loadCourses();
+
 });
