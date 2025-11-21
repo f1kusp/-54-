@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Курсы Колледжа связи №54</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #1565C0;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #E3E3E3;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1565C0;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .login-btn:hover {
+            background: #0D47A1;
+        }
+        
+        .register-link {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            color: #1565C0;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .register-link:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #1565C0;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+        }
+        
+        .password-toggle:hover {
+            color: #1565C0;
+        }
+        
+        .password-container input {
+            padding-right: 80px;
+        }
+        
+        .test-users {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #E3F2FD;
+            border-radius: 5px;
+            border-left: 4px solid #1565C0;
+        }
+        
+        .test-users h4 {
+            margin-bottom: 1rem;
+            color: #1565C0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.php" class="nav-brand">Курсы Колледжа связи №54</a>
+            <div class="nav-links">
+                <a href="index.php">На главную</a>
+                <a href="register.php">Регистрация</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="login-container">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: #1565C0;">Вход в систему</h2>
+            
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required placeholder="ваш@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Пароль:</label>
+                    <div class="password-container">
+                        <input type="password" id="password" required placeholder="Введите пароль">
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            Показать
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="login-btn">Войти</button>
+            </form>
+            
+            <a href="register.php" class="register-link">Нет аккаунта? Зарегистрироваться</a>
+            <a href="index.php" class="back-link">← Вернуться на главную</a>
+            
+            <div class="test-users">
+                <h4>Тестовые пользователи:</h4>
+                <p><strong>Студент:</strong><br>
+                Email: <code>student@college.edu</code><br>
+                Пароль: <code>123</code></p>
+                
+                <p><strong>Администратор:</strong><br>
+                Email: <code>admin@college.edu</code><br>
+                Пароль: <code>admin</code></p>
+            </div>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            console.log('Вход:', email);
+            login(email, password);
+        }
+        
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = 'Скрыть';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = 'Показать';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Автозаполнение для тестирования (можно раскомментировать)
+            // document.getElementById('email').value = 'student@college.edu';
+            // document.getElementById('password').value = '123';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - Курсы Колледжа связи №54</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .register-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #1565C0;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #E3E3E3;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1565C0;
+        }
+        
+        .register-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .register-btn:hover {
+            background: #0D47A1;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #1565C0;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="nav-brand">Курсы Колледжа связи №54</a>
+            <div class="nav-links">
+                <a href="index.html">На главную</a>
+                <a href="login.html">Войти</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="register-container">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: #1565C0;">Регистрация</h2>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="name">ФИО *</label>
+                    <input type="text" id="name" required placeholder="Иванов Иван Иванович">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" required placeholder="ваш@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Телефон</label>
+                    <input type="tel" id="phone" placeholder="+7 (999) 999-99-99">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Пароль *</label>
+                    <input type="password" id="password" required placeholder="Придумайте пароль">
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Подтвердите пароль *</label>
+                    <input type="password" id="confirmPassword" required placeholder="Повторите пароль">
+                </div>
+                
+                <button type="submit" class="register-btn">Зарегистрироваться</button>
+            </form>
+            
+            <a href="login.html" class="back-link">← Уже есть аккаунт? Войдите</a>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('Пароли не совпадают!');
+                return;
+            }
+            
+            if (password.length < 3) {
+                alert('Пароль должен содержать минимум 3 символа');
+                return;
+            }
+            
+            registerUser(email, password, name, phone);
+        });
+        
+        function registerUser(email, password, name, phone) {
+            fetch('api.php?action=register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    name: name,
+                    phone: phone
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Регистрация успешна!');
+                    setCurrentUser(data.user);
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Ошибка: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Ошибка регистрации');
+            });
+        }
+    </script>
+</body>
+</html>

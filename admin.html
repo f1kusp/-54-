@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора - Курсы Колледжа связи №54</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-panel {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #E3E3E3;
+            padding-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .admin-tab {
+            padding: 0.8rem 1.5rem;
+            background: #E3F2FD;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #1565C0;
+            transition: all 0.3s;
+        }
+        
+        .admin-tab.active {
+            background: #1565C0;
+            color: white;
+        }
+        
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #1565C0;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #E3E3E3;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn-primary {
+            background: #1565C0;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-danger {
+            background: #F44336;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .courses-list {
+            margin-top: 2rem;
+        }
+        
+        .course-admin-item {
+            background: #E3F2FD;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #1565C0;
+        }
+        
+        .course-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .course-title {
+            flex: 1;
+            margin: 0;
+            color: #1565C0;
+        }
+        
+        .course-format-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .format-online { background: #2196F3; }
+        .format-offline { background: #FF9800; }
+        .format-hybrid { background: #9C27B0; }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .edit-form {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #1565C0;
+            margin-top: 1rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #E3E3E3;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.php" class="nav-brand">Курсы Колледжа связи №54</a>
+            <div class="nav-links">
+                <a href="index.php">На сайт</a>
+                <a href="#" onclick="logout()">Выйти</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="hero">
+            <h1>Панель администратора</h1>
+            <p>Управление курсами и пользователями</p>
+        </div>
+
+        <div class="admin-panel">
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="showAdminSection('courses')">Управление курсами</button>
+                <button class="admin-tab" onclick="showAdminSection('add-course')">Добавить курс</button>
+                <button class="admin-tab" onclick="showAdminSection('statistics')">Статистика</button>
+            </div>
+
+            <div id="courses-section" class="admin-section active">
+                <h3>Все курсы</h3>
+                <div class="search-box">
+                    <input type="text" id="courseSearch" placeholder="Поиск по названию курса..." onkeyup="searchCourses()">
+                </div>
+                <div class="course-stats" style="margin-bottom: 2rem;">
+                    <div class="stat-item">
+                        <strong>Всего курсов:</strong>
+                        <span id="totalCourses">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Онлайн:</strong>
+                        <span id="onlineCourses">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Очно:</strong>
+                        <span id="offlineCourses">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Гибридные:</strong>
+                        <span id="hybridCourses">0</span>
+                    </div>
+                </div>
+                <div id="adminCoursesList" class="courses-list">
+                    <div class="loading">Загружаем курсы...</div>
+                </div>
+            </div>
+
+            <div id="add-course-section" class="admin-section">
+                <h3>Добавить новый курс</h3>
+                <form id="addCourseForm" onsubmit="addNewCourse(event)">
+                    <div class="form-group">
+                        <label for="courseTitle">Название курса *</label>
+                        <input type="text" id="courseTitle" required placeholder="Введите название курса">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="courseDescription">Описание курса *</label>
+                        <textarea id="courseDescription" required placeholder="Опишите содержание курса"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="courseInstructor">Преподаватель *</label>
+                        <input type="text" id="courseInstructor" required placeholder="ФИО преподавателя">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="courseDirection">Направление *</label>
+                        <select id="courseDirection" required>
+                            <option value="">Выберите направление</option>
+                            <option value="IT">IT</option>
+                            <option value="Дизайн">Дизайн</option>
+                            <option value="Маркетинг">Маркетинг</option>
+                            <option value="Бизнес">Бизнес</option>
+                            <option value="Языки">Языки</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="courseFormat">Формат обучения *</label>
+                        <select id="courseFormat" required>
+                            <option value="">Выберите формат</option>
+                            <option value="online">Онлайн</option>
+                            <option value="offline">Очно</option>
+                            <option value="hybrid">Гибридный</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="courseSchedule">Расписание *</label>
+                        <input type="text" id="courseSchedule" placeholder="Пн, Ср, Пт 10:00-12:00" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="courseDuration">Длительность курса</label>
+                        <input type="text" id="courseDuration" placeholder="8 недель">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Добавить курс</button>
+                        <button type="reset" class="btn-secondary">Очистить форму</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="statistics-section" class="admin-section">
+                <h3>Статистика платформы</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                    <div style="background: #E3F2FD; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                        <h4 style="margin: 0 0 1rem 0; color: #1565C0;">Всего курсов</h4>
+                        <div style="font-size: 2rem; font-weight: bold; color: #1565C0;" id="statsTotalCourses">5</div>
+                    </div>
+                    <div style="background: #E8F5E8; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                        <h4 style="margin: 0 0 1rem 0; color: #4CAF50;">Онлайн курсы</h4>
+                        <div style="font-size: 2rem; font-weight: bold; color: #4CAF50;" id="statsOnlineCourses">2</div>
+                    </div>
+                    <div style="background: #FFF3E0; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                        <h4 style="margin: 0 0 1rem 0; color: #FF9800;">Очные курсы</h4>
+                        <div style="font-size: 2rem; font-weight: bold; color: #FF9800;" id="statsOfflineCourses">2</div>
+                    </div>
+                    <div style="background: #F3E5F5; padding: 1.5rem; border-radius: 8px; text-align: center;">
+                        <h4 style="margin: 0 0 1rem 0; color: #9C27B0;">Гибридные курсы</h4>
+                        <div style="font-size: 2rem; font-weight: bold; color: #9C27B0;" id="statsHybridCourses">1</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <h4>Распределение по направлениям</h4>
+                    <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #E3E3E3;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>IT</span>
+                            <span>2 курса</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Дизайн</span>
+                            <span>2 курса</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Маркетинг</span>
+                            <span>1 курс</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script>
+        // Демо-данные всех курсов
+        let allCourses = [
+            {
+                id: 1,
+                title: "Введение в программирование на Python",
+                description: "Основы программирования для начинающих",
+                instructor: "Иван Петров",
+                direction: "IT",
+                format: "online",
+                schedule: "Пн, Ср 14:00-16:00",
+                duration: "8 недель",
+                students: 24
+            },
+            {
+                id: 2,
+                title: "Веб-дизайн для начинающих",
+                description: "Создание современных веб-интерфейсов",
+                instructor: "Мария Сидорова", 
+                direction: "Дизайн",
+                format: "offline",
+                schedule: "Вт, Чт 10:00-12:00",
+                duration: "6 недель",
+                students: 18
+            },
+            {
+                id: 3,
+                title: "Основы маркетинга",
+                description: "Основные принципы современного маркетинга",
+                instructor: "Анна Козлова",
+                direction: "Маркетинг", 
+                format: "hybrid",
+                schedule: "Пт 16:00-18:00",
+                duration: "4 недели",
+                students: 15
+            },
+            {
+                id: 4,
+                title: "Базы данных SQL",
+                description: "Работа с реляционными базами данных",
+                instructor: "Дмитрий Иванов",
+                direction: "IT",
+                format: "online",
+                schedule: "Вт, Чт 18:00-20:00",
+                duration: "6 недель",
+                students: 20
+            },
+            {
+                id: 5,
+                title: "Графический дизайн",
+                description: "Создание визуального контента",
+                instructor: "Ольга Петрова",
+                direction: "Дизайн",
+                format: "offline",
+                schedule: "Ср, Пт 14:00-16:00",
+                duration: "8 недель",
+                students: 22
+            }
+        ];
+
+        let editingCourseId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = getCurrentUser();
+            
+            if (!user || user.role !== 'admin') {
+                alert('У вас нет доступа к этой странице');
+                window.location.href = 'index.php';
+                return;
+            }
+            
+            loadAdminCourses();
+            updateStatistics();
+        });
+
+        function showAdminSection(sectionId) {
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId + '-section').classList.add('active');
+            event.target.classList.add('active');
+            
+            // Сбрасываем режим редактирования при переключении вкладок
+            if (sectionId !== 'courses' && editingCourseId) {
+                cancelEdit();
+            }
+        }
+
+        function loadAdminCourses() {
+            setTimeout(() => {
+                displayAdminCourses(allCourses);
+                updateCourseStats(allCourses);
+            }, 500);
+        }
+
+        function displayAdminCourses(courses) {
+            const container = document.getElementById('adminCoursesList');
+            
+            if (courses.length === 0) {
+                container.innerHTML = '<div class="loading">Курсы не найдены</div>';
+                return;
+            }
+            
+            container.innerHTML = courses.map(course => {
+                const isEditing = editingCourseId === course.id;
+                
+                return `
+                <div class="course-admin-item">
+                    ${isEditing ? renderEditForm(course) : renderCourseView(course)}
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderCourseView(course) {
+            return `
+                <div class="course-header">
+                    <h4 class="course-title">${course.title}</h4>
+                    <span class="course-format-badge format-${course.format}">
+                        ${getFormatText(course.format)}
+                    </span>
+                </div>
+                
+                <p><strong>Преподаватель:</strong> ${course.instructor}</p>
+                <p><strong>Направление:</strong> ${course.direction}</p>
+                <p><strong>Расписание:</strong> ${course.schedule}</p>
+                <p><strong>Длительность:</strong> ${course.duration}</p>
+                <p><strong>Описание:</strong> ${course.description}</p>
+                
+                <div class="course-stats">
+                    <div class="stat-item">
+                        <strong>Записалось студентов:</strong>
+                        <span>${course.students || 0}</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>ID курса:</strong>
+                        <span>#${course.id}</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem;">
+                    <button class="btn-primary" onclick="startEditCourse(${course.id})">Редактировать</button>
+                    <button class="btn-danger" onclick="deleteCourse(${course.id})">Удалить</button>
+                </div>
+            `;
+        }
+
+        function renderEditForm(course) {
+            return `
+                <div class="edit-form">
+                    <h4 style="margin-top: 0; color: #1565C0;">Редактирование курса</h4>
+                    
+                    <div class="form-group">
+                        <label for="editTitle${course.id}">Название курса *</label>
+                        <input type="text" id="editTitle${course.id}" value="${course.title}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editDescription${course.id}">Описание курса *</label>
+                        <textarea id="editDescription${course.id}" required>${course.description}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editInstructor${course.id}">Преподаватель *</label>
+                        <input type="text" id="editInstructor${course.id}" value="${course.instructor}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editDirection${course.id}">Направление *</label>
+                        <select id="editDirection${course.id}" required>
+                            <option value="IT" ${course.direction === 'IT' ? 'selected' : ''}>IT</option>
+                            <option value="Дизайн" ${course.direction === 'Дизайн' ? 'selected' : ''}>Дизайн</option>
+                            <option value="Маркетинг" ${course.direction === 'Маркетинг' ? 'selected' : ''}>Маркетинг</option>
+                            <option value="Бизнес" ${course.direction === 'Бизнес' ? 'selected' : ''}>Бизнес</option>
+                            <option value="Языки" ${course.direction === 'Языки' ? 'selected' : ''}>Языки</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editFormat${course.id}">Формат обучения *</label>
+                        <select id="editFormat${course.id}" required>
+                            <option value="online" ${course.format === 'online' ? 'selected' : ''}>Онлайн</option>
+                            <option value="offline" ${course.format === 'offline' ? 'selected' : ''}>Очно</option>
+                            <option value="hybrid" ${course.format === 'hybrid' ? 'selected' : ''}>Гибридный</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editSchedule${course.id}">Расписание *</label>
+                        <input type="text" id="editSchedule${course.id}" value="${course.schedule}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editDuration${course.id}">Длительность курса</label>
+                        <input type="text" id="editDuration${course.id}" value="${course.duration}">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn-success" onclick="saveCourse(${course.id})">Сохранить</button>
+                        <button class="btn-secondary" onclick="cancelEdit()">Отмена</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function startEditCourse(courseId) {
+            editingCourseId = courseId;
+            loadAdminCourses();
+        }
+
+        function saveCourse(courseId) {
+            const course = allCourses.find(c => c.id === courseId);
+            if (!course) return;
+            
+            // Получаем обновленные данные из формы
+            const updatedCourse = {
+                ...course,
+                title: document.getElementById(`editTitle${courseId}`).value,
+                description: document.getElementById(`editDescription${courseId}`).value,
+                instructor: document.getElementById(`editInstructor${courseId}`).value,
+                direction: document.getElementById(`editDirection${courseId}`).value,
+                format: document.getElementById(`editFormat${courseId}`).value,
+                schedule: document.getElementById(`editSchedule${courseId}`).value,
+                duration: document.getElementById(`editDuration${courseId}`).value
+            };
+            
+            // Обновляем курс в массиве
+            const index = allCourses.findIndex(c => c.id === courseId);
+            if (index !== -1) {
+                allCourses[index] = updatedCourse;
+            }
+            
+            // Выходим из режима редактирования
+            editingCourseId = null;
+            
+            alert('Изменения сохранены!');
+            loadAdminCourses();
+            updateStatistics();
+        }
+
+        function cancelEdit() {
+            editingCourseId = null;
+            loadAdminCourses();
+        }
+
+        function searchCourses() {
+            const searchTerm = document.getElementById('courseSearch').value.toLowerCase();
+            const filteredCourses = allCourses.filter(course => 
+                course.title.toLowerCase().includes(searchTerm) ||
+                course.instructor.toLowerCase().includes(searchTerm) ||
+                course.direction.toLowerCase().includes(searchTerm)
+            );
+            
+            displayAdminCourses(filteredCourses);
+            updateCourseStats(filteredCourses);
+        }
+
+        function updateCourseStats(courses) {
+            const total = courses.length;
+            const online = courses.filter(c => c.format === 'online').length;
+            const offline = courses.filter(c => c.format === 'offline').length;
+            const hybrid = courses.filter(c => c.format === 'hybrid').length;
+            
+            document.getElementById('totalCourses').textContent = total;
+            document.getElementById('onlineCourses').textContent = online;
+            document.getElementById('offlineCourses').textContent = offline;
+            document.getElementById('hybridCourses').textContent = hybrid;
+        }
+
+        function updateStatistics() {
+            const total = allCourses.length;
+            const online = allCourses.filter(c => c.format === 'online').length;
+            const offline = allCourses.filter(c => c.format === 'offline').length;
+            const hybrid = allCourses.filter(c => c.format === 'hybrid').length;
+            
+            document.getElementById('statsTotalCourses').textContent = total;
+            document.getElementById('statsOnlineCourses').textContent = online;
+            document.getElementById('statsOfflineCourses').textContent = offline;
+            document.getElementById('statsHybridCourses').textContent = hybrid;
+        }
+
+        function getFormatText(format) {
+            const formats = {
+                'online': 'Онлайн',
+                'offline': 'Очно', 
+                'hybrid': 'Гибридный'
+            };
+            return formats[format] || format;
+        }
+
+        function addNewCourse(event) {
+            event.preventDefault();
+            
+            const courseData = {
+                id: Math.max(...allCourses.map(c => c.id)) + 1,
+                title: document.getElementById('courseTitle').value,
+                description: document.getElementById('courseDescription').value,
+                instructor: document.getElementById('courseInstructor').value,
+                direction: document.getElementById('courseDirection').value,
+                format: document.getElementById('courseFormat').value,
+                schedule: document.getElementById('courseSchedule').value,
+                duration: document.getElementById('courseDuration').value || 'Не указана',
+                students: 0
+            };
+            
+            console.log('Добавляем курс:', courseData);
+            
+            // Добавляем курс в массив
+            allCourses.push(courseData);
+            
+            alert('Курс успешно добавлен!');
+            
+            // Обновляем отображение
+            event.target.reset();
+            loadAdminCourses();
+            updateStatistics();
+            showAdminSection('courses');
+        }
+
+        function deleteCourse(courseId) {
+            const course = allCourses.find(c => c.id === courseId);
+            if (!course) return;
+            
+            if (confirm(`Вы уверены, что хотите удалить курс "${course.title}"?`)) {
+                // Удаляем курс из массива
+                const index = allCourses.findIndex(c => c.id === courseId);
+                if (index !== -1) {
+                    allCourses.splice(index, 1);
+                }
+                
+                // Если удаляемый курс был в режиме редактирования, сбрасываем
+                if (editingCourseId === courseId) {
+                    editingCourseId = null;
+                }
+                
+                alert(`Курс "${course.title}" удален`);
+                loadAdminCourses();
+                updateStatistics();
+            }
+        }
+    </script>
+</body>
+</html>
